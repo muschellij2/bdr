@@ -1,9 +1,24 @@
+Type: Package
 Package: bdr
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.5.2)
-License: What license is it under?
+Title: Interface to Brown Data Repository API
+Version: 0.1.0
+Authors@R: 
+    person(given = "John",
+           family = "Muschelli",
+           role = c("aut", "cre"),
+           email = "muschellij2@gmail.com",
+           comment = c(ORCID = "0000-0001-6469-1750"))
+Description: The Brown Digital Repository API
+    <https://repository.library.brown.edu/studio/api-docs/> allows users
+    to download data. We provide a simple interface to interact with the
+    'RESTful' API
+License: GPL-3
+Suggests: 
+    covr,
+    knitr,
+    rmarkdown,
+    testthat
 Encoding: UTF-8
 LazyData: true
+VignetteBuilder: knitr
+RoxygenNote: 6.1.1
