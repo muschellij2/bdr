@@ -22,33 +22,77 @@ install.packages("bdr")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+We will use the `bdr_collections` function to grab the collections from
+BDR:
 
 ``` r
 library(bdr)
-## basic example code
+df = bdr_collections()
+head(df)
+#> # A tibble: 6 x 7
+#>      id description     name    json_uri    tags  uri      thumbnail_url   
+#>   <int> <chr>           <chr>   <chr>       <chr> <chr>    <chr>           
+#> 1   674 Located in the… Africa… https://re… <NA>  https:/… <NA>            
+#> 2   278 "The Departmen… Americ… https://re… <NA>  https:/… <NA>            
+#> 3   785 This is the re… Angela… https://re… depo… https:/… https://reposit…
+#> 4   280 The Department… Anthro… https://re… <NA>  https:/… <NA>            
+#> 5   282 The Division o… Applie… https://re… <NA>  https:/… <NA>            
+#> 6   719 "This case stu… Bactri… https://re… rese… https:/… https://reposit…
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+Once we have the collections, we can grab a particular collection using
+standard `dplyr` syntax to grab the collection you want to explore using
+the `bdr_collection` function:
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
+coll_url = df %>%
+    filter(grepl("Bactrian ", name)) %>%
+    pull(json_uri)
+coll = bdr_collection(coll_url)
+coll
+#> # A tibble: 1 x 14
+#>      id description name  json_uri tags  thumbnail_url uri   facets
+#>   <int> <chr>       <chr> <chr>    <chr> <chr>         <chr> <list>
+#> 1   719 "This case… Bact… https:/… rese… https://repo… http… <data…
+#> # … with 6 more variables: parent_folders <lgl>, child_folders <lgl>,
+#> #   ancestors <lgl>, items <list>, num_items <int>, item_start <int>
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
+We can extract the `item` URL from `coll$items`:
 
-You can also embed plots, for example:
+``` r
+url = coll$items[[1]]$json_uri[1]
+print(url)
+#> [1] "https://repository.library.brown.edu/api/items/bdr:697231/"
+```
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+The `bdr_item_download_link` function will process links to get the
+download link for downloading the item:
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub\!
+``` r
+link = bdr_item_download_link(url)
+```
+
+We can use `httr::GET` to download the data to disk and unzip them using
+the `unzip` function:
+
+``` r
+
+tfile = tempfile(fileext = ".zip")
+dl = httr::GET(link,
+               httr::write_disk(tfile),
+               if (interactive()) httr::progress())
+tdir = tempfile()
+dir.create(tdir)
+unz = unzip(tfile, exdir = tdir)
+#> Warning in unzip(tfile, exdir = tdir): error -3 in extracting from zip file
+```

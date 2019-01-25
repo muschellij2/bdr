@@ -17,8 +17,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of bdr is to provide a simple interface to interact with the
-    'RESTful' API of the Brown Digital Repository API https://repository.library.brown.edu/studio/api-docs/.
+The goal of bdr is to provide a simple interface to interact with the 'RESTful' API of the Brown Digital Repository API https://repository.library.brown.edu/studio/api-docs/.
 
 
 ## Installation
@@ -31,25 +30,46 @@ install.packages("bdr")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+
+We will use the `bdr_collections` function to grab the collections from BDR:
 
 ```{r example}
 library(bdr)
-## basic example code
+df = bdr_collections()
+head(df)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
+Once we have the collections, we can grab a particular collection using standard `dplyr` syntax to grab the collection you want to explore using the `bdr_collection` function:
+```{r ex}
+library(dplyr)
+coll_url = df %>%
+    filter(grepl("Bactrian ", name)) %>%
+    pull(json_uri)
+coll = bdr_collection(coll_url)
+coll
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
 
-You can also embed plots, for example:
 
-```{r pressure, echo = FALSE}
-plot(pressure)
+We can extract the `item` URL from `coll$items`:
+```{r dl}
+url = coll$items[[1]]$json_uri[1]
+print(url)
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+The `bdr_item_download_link` function will process links to get the download link for downloading the item:
+```{r dl_link}
+link = bdr_item_download_link(url)
+```
+
+We can use `httr::GET` to download the data to disk and unzip them using the `unzip` function: 
+```{r dl_data}
+
+tfile = tempfile(fileext = ".zip")
+dl = httr::GET(link,
+               httr::write_disk(tfile),
+               if (interactive()) httr::progress())
+tdir = tempfile()
+dir.create(tdir)
+unz = unzip(tfile, exdir = tdir)
+```
