@@ -11,8 +11,13 @@ Authors@R:
 Description: The Brown Digital Repository API
     <https://repository.library.brown.edu/studio/api-docs/> allows users
     to download data. We provide a simple interface to interact with the
-    'RESTful' API
+    'RESTful' API.
 License: GPL-3
+Imports:
+    httr,
+    tibble,
+    dplyr,
+    jsonlite
 Suggests: 
     covr,
     knitr,
