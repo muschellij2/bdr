@@ -1,5 +1,6 @@
 #' Parse BDR Item Downlaod Link
 #'
+#' @param url A character URL pointing to a JSON output
 #' @return A \code{character} vector of links.
 #' @export
 #'

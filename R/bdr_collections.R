@@ -12,7 +12,8 @@
 #'     pull(json_uri)
 bdr_collections = function() {
 
-
+  description = NULL
+  rm(list = "description")
   url = "https://repository.library.brown.edu/api/collections/"
   res = bdr_parse_url(url)
   cr = res$data

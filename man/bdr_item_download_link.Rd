@@ -6,6 +6,9 @@
 \usage{
 bdr_item_download_link(url)
 }
+\arguments{
+\item{url}{A character URL pointing to a JSON output}
+}
 \value{
 A \code{character} vector of links.
 }
@@ -27,6 +30,8 @@ tfile = tempfile(fileext = ".zip")
 dl = httr::GET(link,
 httr::write_disk(tfile),
 if (interactive()) httr::progress())
-unz = unzip(tfile)
+tdir = tempfile()
+dir.create(tdir)
+unz = unzip(tfile, exdir = tdir)
 
 }

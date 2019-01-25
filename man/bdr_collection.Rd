@@ -6,6 +6,9 @@
 \usage{
 bdr_collection(url)
 }
+\arguments{
+\item{url}{A character URL pointing to a JSON output}
+}
 \value{
 A \code{tibble} of information of collections
 }

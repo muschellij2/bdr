@@ -1,5 +1,6 @@
 #' Parse BDR Collection
 #'
+#' @param url A character URL pointing to a JSON output
 #' @return A \code{tibble} of information of collections
 #' @export
 #'
@@ -16,6 +17,8 @@
 #'
 bdr_collection = function(url) {
 
+  description = NULL
+  rm(list = "description")
   res = bdr_parse_url(url)
   cr = res$data
 
